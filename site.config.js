@@ -4,7 +4,7 @@ const CONFIG = {
     name: "thucpham",
     image: "/avatar.svg", // If you want to create your own notion avatar, check out https://notion-avatar.vercel.app
     role: "AI Engineer",
-    bio: "I develop everything using python.",
+    bio: "Welcome to my blog! I am ThucPham, a passionate Python programmer with a keen interest in Artificial Intelligence (AI). I thrive on exploring and applying cutting-edge technology to solve real-world problems. Python is my primary tool in this technological journey, enabling me to execute everything from the simplest tasks to constructing intricate AI algorithms. I'm also diving deep into the complexity and potential of AI, a field that's shaping our future. This blog is where I share my experiences and learnings in Python and AI. Whether you're a seasoned programmer, a novice just dipping your toes into coding, or an AI enthusiast, I hope to inspire and educate through my posts. So join me on this exciting exploration of Python and AI!",
     email: "thuc248997@gmail.com",
     linkedin: "thuc-pham-807241132",
     github: "thuc248997",
