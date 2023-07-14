@@ -3,8 +3,10 @@
 @tailwind utilities;
 
 html {
-  font-family: "Pretendard", "Roboto", sans-serif;
-  --scrollbarBG: #ffffff00;
+  /* font-family: "Pretendard", "Roboto", sans-serif;
+   */
+  font-family: "Inconsolata", "Roboto", sans-serif;
+   --scrollbarBG: #ffffff00;
   --thumbBG: #b8b8b8;
 }
 body::-webkit-scrollbar {
