@@ -1,7 +1,7 @@
 /* NOTION CSS OVERRIDE */
 
 .notion {
-  font-family: Fira Mono, Roboto, sans-serif;
+  font-family: Fira Mono, sans-serif;
   @apply text-gray-600 dark:text-gray-300;
   overflow-wrap: break-word;
 }

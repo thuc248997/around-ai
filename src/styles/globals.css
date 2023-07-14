@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 html {
-  font-family: "Fira Mono", "Roboto", sans-serif;
+  font-family: "Fira Mono", sans-serif;
   --scrollbarBG: #ffffff00;
   --thumbBG: #b8b8b8;
 }
