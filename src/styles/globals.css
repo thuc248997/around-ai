@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 html {
-  font-family: "monospace", sans-serif;
+  font-family: monospace, sans-serif;
   --scrollbarBG: #ffffff00;
   --thumbBG: #b8b8b8;
 }
