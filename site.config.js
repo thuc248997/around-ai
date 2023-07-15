@@ -53,7 +53,7 @@ const CONFIG = {
   utterances: {
     enable: false,
     config: {
-      repo: "morethanmin/morethan-log",
+      repo: "thuc248997/around-ai",
       "issue-term": "og:title",
       label: "💬 Utterances",
     },
