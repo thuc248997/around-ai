@@ -18,9 +18,9 @@ const CONFIG = {
   ],
   // blog setting (required)
   blog: {
-    title: "around-ai",
-    description: "welcome to around-ai!",
-    theme: "auto", // ['light', 'dark', 'auto']
+    title: "Around-ai",
+    description: "Welcome to around-ai!",
+    theme: "auto", // ['light', 'dark', 'auto'
   },
 
   // CONFIG configration (required)
