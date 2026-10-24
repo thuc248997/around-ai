@@ -1,33 +1,35 @@
-export type TPostStatus = "Private" | "Public" | "PublicOnDetail"
-export type TPostType = "Post" | "Paper" | "Page"
+export type TPostStatus = "DRAFT" | "PUBLISHED" | "UNLISTED"
+export type TPostType = "POST" | "PAGE"
 
+// Post as passed to pages (dates serialized to ISO strings)
 export type TPost = {
   id: string
-  date: { start_date: string }
-  type: TPostType[]
   slug: string
-  tags?: string[]
-  category?: string[]
-  summary?: string
-  author?: {
-    id: string
-    name: string
-    profile_photo?: string
-  }[]
   title: string
-  status: TPostStatus[]
-  createdTime: string
-  fullWidth: boolean
-  thumbnail?: string
+  summary: string
+  coverImage: string | null
+  tags: string[]
+  category: string | null
+  status: TPostStatus
+  type: TPostType
+  publishedAt: string | null
+  createdAt: string
+  updatedAt: string
 }
 
-export type TPosts = TPost[]
+export type TPostDetail = TPost & { content: string }
+
+export type TAttachment = {
+  id: string
+  filename: string
+  mimeType: string
+  size: number
+  url: string
+  createdAt: string
+}
 
 export type TTags = {
   [tagName: string]: number
-}
-export type TCategories = {
-  [category: string]: number
 }
 
 export type ThemeType = "dark" | "light"

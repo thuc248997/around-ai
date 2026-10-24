@@ -1,41 +1,27 @@
+import { useEffect, useRef } from "react"
 import { CONFIG } from "site.config"
-import { useEffect } from "react"
 
-//TODO: useRef?
+const Utterances: React.FC<{ issueTerm: string }> = ({ issueTerm }) => {
+  const ref = useRef<HTMLDivElement>(null)
 
-type Props = {
-  issueTerm: string
-}
-
-const Utterances: React.FC<Props> = ({ issueTerm }) => {
   useEffect(() => {
-    const theme = "github-light"
-    // 'github-dark'
+    const el = ref.current
+    if (!el) return
+    const dark = document.documentElement.classList.contains("dark")
     const script = document.createElement("script")
-    const anchor = document.getElementById("comments")
-    if (!anchor) return
-
-    script.setAttribute("src", "https://utteranc.es/client.js")
-    script.setAttribute("crossorigin", "anonymous")
-    script.setAttribute("async", `true`)
+    script.src = "https://utteranc.es/client.js"
+    script.async = true
+    script.crossOrigin = "anonymous"
+    script.setAttribute("theme", dark ? "github-dark" : "github-light")
     script.setAttribute("issue-term", issueTerm)
-    script.setAttribute("theme", theme)
-    const config: { [key: string]: string } = CONFIG.utterances.config
-    Object.keys(config).forEach((key) => {
-      script.setAttribute(key, config[key])
-    })
-    anchor.appendChild(script)
+    Object.entries(CONFIG.utterances.config).forEach(([k, v]) => script.setAttribute(k, v))
+    el.appendChild(script)
     return () => {
-      anchor.innerHTML = ""
+      el.innerHTML = ""
     }
-  })
-  return (
-    <>
-      <div id="comments" className="md:-ml-16">
-        <div className="utterances-frame"></div>
-      </div>
-    </>
-  )
+  }, [issueTerm])
+
+  return <div ref={ref} className="mt-16" />
 }
 
 export default Utterances

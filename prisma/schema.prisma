@@ -1,0 +1,52 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum PostStatus {
+  DRAFT
+  PUBLISHED
+  UNLISTED // reachable by link, hidden from the feed
+}
+
+enum PostType {
+  POST
+  PAGE // standalone page such as /about, never listed in the feed
+}
+
+model Post {
+  id          String       @id @default(cuid())
+  slug        String       @unique
+  title       String
+  summary     String       @default("")
+  content     String       @default("") // markdown
+  coverImage  String?
+  tags        String[]
+  category    String?
+  status      PostStatus   @default(DRAFT)
+  type        PostType     @default(POST)
+  publishedAt DateTime?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  attachments Attachment[]
+
+  @@index([status, type, publishedAt])
+}
+
+model Attachment {
+  id         String   @id @default(cuid())
+  storedName String   @unique // file name on disk inside UPLOAD_DIR
+  filename   String // original file name
+  mimeType   String
+  size       Int
+  postId     String?
+  post       Post?    @relation(fields: [postId], references: [id], onDelete: SetNull)
+  createdAt  DateTime @default(now())
+
+  @@index([postId])
+}

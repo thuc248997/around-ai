@@ -37,3 +37,8 @@ yarn-error.log*
 # public/sitemap.xml
 
 /.firebase
+# uploaded files (local dev)
+/uploads
+
+# typescript
+*.tsbuildinfo

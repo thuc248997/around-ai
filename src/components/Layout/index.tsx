@@ -1,37 +1,21 @@
 import Header from "./Header"
-import PropTypes from "prop-types"
+import Footer from "./Footer"
 import MetaConfig, { MetaConfigProps } from "./MetaConfig"
 
 type Props = {
   children: React.ReactNode
   metaConfig: MetaConfigProps
-  fullWidth?: boolean
 }
 
-const Layout: React.FC<Props> = ({
-  children,
-  metaConfig,
-  fullWidth = false,
-}) => {
+const Layout: React.FC<Props> = ({ children, metaConfig }) => {
   return (
-    <div>
+    <div className="flex min-h-screen flex-col">
       <MetaConfig {...metaConfig} />
-      <div className={`wrapper`}>
-        {metaConfig.type !== "Paper" && <Header fullWidth={fullWidth} />}
-        <main
-          className={`m-auto flex-grow w-full transition-all max-w-6xl px-4 ${
-            fullWidth && "px-4 md:px-24"
-          } ${metaConfig.type === "Paper" && "py-10"} `}
-        >
-          {children}
-        </main>
-      </div>
+      <Header />
+      <main className="mx-auto w-full max-w-5xl flex-grow px-4 sm:px-6">{children}</main>
+      <Footer />
     </div>
   )
-}
-
-Layout.propTypes = {
-  children: PropTypes.node,
 }
 
 export default Layout

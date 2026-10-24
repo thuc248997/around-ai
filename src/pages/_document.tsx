@@ -1,42 +1,28 @@
 import Document, { Html, Head, Main, NextScript } from "next/document"
 import { CONFIG } from "site.config"
 
+// Runs before paint so dark mode doesn't flash
+const themeScript = `(function(){try{var c=${JSON.stringify(CONFIG.blog.theme)};var t=c!=="auto"?c:(localStorage.theme||(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"));if(t==="dark")document.documentElement.classList.add("dark")}catch(e){}})()`
+
 class MyDocument extends Document {
   render() {
     return (
       <Html lang={CONFIG.lang}>
         <Head>
-          <link
-            rel="stylesheet"
-            as="font"
-            href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard-dynamic-subset.css"
-          />
+          <script dangerouslySetInnerHTML={{ __html: themeScript }} />
           <link rel="icon" href="/favicon.ico" />
-          <link
-            rel="apple-touch-icon"
-            sizes="192x192"
-            href="/apple-touch-icon.png"
-          ></link>
-          <link
-            rel="alternate"
-            type="application/rss+xml"
-            title="RSS 2.0"
-            href="/feed"
-          ></link>
-          {/* theme setting */}
-          <meta name="theme-color" content={"#f1f3f5"} />
+          <link rel="apple-touch-icon" sizes="192x192" href="/apple-touch-icon.png" />
+          <link rel="alternate" type="application/rss+xml" title="RSS 2.0" href="/feed" />
 
           {/* google search console */}
           {CONFIG.googleSearchConsole.enable === true && (
-            <>
-              <meta
-                name="google-site-verification"
-                content={CONFIG.googleSearchConsole.config.siteVerification}
-              />
-            </>
+            <meta
+              name="google-site-verification"
+              content={CONFIG.googleSearchConsole.config.siteVerification}
+            />
           )}
         </Head>
-        <body className="bg-slate-100 dark:bg-black">
+        <body className="bg-white text-zinc-800 antialiased dark:bg-zinc-950 dark:text-zinc-200">
           <Main />
           <NextScript />
         </body>
