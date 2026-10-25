@@ -1,6 +1,6 @@
 import Link from "next/link"
-import { CONFIG } from "site.config"
 import { formatShortDate, postDate } from "@libs/utils"
+import { dateLocale, useLocale } from "@libs/i18n"
 import { TPost } from "@customTypes/index"
 
 type Props = { data: TPost }
@@ -9,12 +9,13 @@ const MAX_TAGS = 3
 
 /** Archive row: short date on the left, title / excerpt / tags on the right */
 const PostCard: React.FC<Props> = ({ data }) => {
+  const locale = useLocale()
   const date = postDate(data)
   const extra = data.tags.length - MAX_TAGS
   return (
     <article className="group relative grid gap-1 py-7 sm:grid-cols-[5.5rem_1fr] sm:gap-4">
       <time dateTime={date} className="pt-1 text-xs text-term-muted">
-        {formatShortDate(date, CONFIG.lang)}
+        {formatShortDate(date, dateLocale(locale))}
       </time>
       <div className="min-w-0">
         <h3 className="text-[17px] font-bold leading-snug text-term-fg group-hover:text-term-green">

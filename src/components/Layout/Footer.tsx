@@ -1,33 +1,35 @@
 import Link from "next/link"
 import { CONFIG } from "site.config"
 import SocialLinks from "@components/SocialLinks"
+import { useT } from "@libs/i18n"
 import Logo from "./Logo"
 
-const columns = [
-  {
-    title: "Explore",
-    links: [
-      { name: "Home", href: "/" },
-      { name: "About", href: "/about" },
-      { name: "Contact", href: `mailto:${CONFIG.profile.email}` },
-    ],
-  },
-  {
-    title: "Content",
-    links: [
-      { name: "Blog", href: "/blog" },
-      // API rewrites, not pages
-      { name: "RSS feed", href: "/feed", raw: true },
-      { name: "Sitemap", href: "/sitemap.xml", raw: true },
-    ],
-  },
-  {
-    title: "Projects",
-    links: CONFIG.projects.map((p) => ({ name: p.name, href: p.href })),
-  },
-]
-
 const Footer: React.FC = () => {
+  const { t, copy } = useT()
+  const f = t.footer
+  const columns = [
+    {
+      title: f.explore,
+      links: [
+        { name: f.home, href: "/" },
+        { name: f.about, href: "/about" },
+        { name: f.contact, href: `mailto:${CONFIG.profile.email}` },
+      ],
+    },
+    {
+      title: f.content,
+      links: [
+        { name: f.blog, href: "/blog" },
+        // API rewrites, not pages
+        { name: f.rss, href: "/feed", raw: true },
+        { name: f.sitemap, href: "/sitemap.xml", raw: true },
+      ],
+    },
+    {
+      title: f.projects,
+      links: CONFIG.projects.map((p) => ({ name: p.name, href: p.href })),
+    },
+  ]
   const from = +CONFIG.since || new Date().getFullYear()
   const now = new Date().getFullYear()
   return (
@@ -36,8 +38,7 @@ const Footer: React.FC = () => {
         <div>
           <Logo />
           <p className="mt-4 max-w-xs text-xs leading-relaxed text-term-muted">
-            {CONFIG.profile.role} · {CONFIG.blog.description} Notes on LLMs, machine learning
-            and the systems around them.
+            {CONFIG.profile.role} · {copy.blog.description} {f.tagline}
           </p>
           <SocialLinks className="-ml-2 mt-4" />
         </div>
@@ -65,7 +66,7 @@ const Footer: React.FC = () => {
       <div className="border-t border-term-line">
         <div className="mx-auto flex max-w-6xl flex-col gap-2 px-4 py-5 text-xs text-term-muted sm:flex-row sm:items-center sm:justify-between sm:px-6">
           <p>
-            © {from === now ? now : `${from}–${now}`} {CONFIG.profile.name}. All rights reserved.
+            © {from === now ? now : `${from}–${now}`} {CONFIG.profile.name}. {f.rights}
           </p>
           <p>
             <span className="text-term-green">$</span> exit 0

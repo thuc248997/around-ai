@@ -7,14 +7,15 @@ import { CONFIG } from "site.config"
 import Layout from "@components/Layout"
 import PostCard from "@components/PostCard"
 import { countTags, getPublishedPosts } from "@libs/server/posts"
+import { dateLocale, toLocale, useT } from "@libs/i18n"
 import { formatDate, postDate } from "@libs/utils"
 import { TPost, TTags } from "@customTypes/index"
 import { NextPageWithLayout } from "./_app"
 
 type Props = { posts: TPost[]; tags: TTags }
 
-export const getServerSideProps: GetServerSideProps<Props> = async ({ res }) => {
-  const posts = await getPublishedPosts()
+export const getServerSideProps: GetServerSideProps<Props> = async ({ res, locale }) => {
+  const posts = await getPublishedPosts(toLocale(locale))
   res.setHeader("Cache-Control", "public, s-maxage=60, stale-while-revalidate=600")
   return { props: { posts, tags: countTags(posts) } }
 }
@@ -23,6 +24,8 @@ const PAGE_SIZE = 10
 
 const BlogPage: NextPageWithLayout<Props> = ({ posts, tags }) => {
   const router = useRouter()
+  const { locale, t: tr, copy } = useT()
+  const t = tr.blog
   const [q, setQ] = useState("")
   const [category, setCategory] = useState<string | null>(null)
   const [page, setPage] = useState(1)
@@ -71,21 +74,20 @@ const BlogPage: NextPageWithLayout<Props> = ({ posts, tags }) => {
         <div className="mx-auto grid max-w-6xl gap-8 px-4 py-14 sm:px-6 lg:grid-cols-[1.3fr_1fr] lg:items-end lg:py-20">
           <div>
             <p className="eyebrow mb-4">
-              <span className="text-term-muted">~/</span>blog / the engineering notebook
+              <span className="text-term-muted">~/</span>{t.crumb}
             </p>
             <h1 className="text-4xl font-extrabold leading-[1.05] tracking-tight text-term-fg sm:text-6xl">
-              Ideas tested.
+              {t.title}
               <br />
-              <span className="cursor text-term-green">Lessons shared.</span>
+              <span className="cursor text-term-green">{t.titleAccent}</span>
             </h1>
           </div>
           <div>
             <p className="text-[15px] leading-relaxed text-term-fg/90">
-              Field notes from building AI systems. Practical experiments, engineering decisions, and
-              lessons worth sharing.
+              {t.lead}
             </p>
             <p className="mt-5 border-t border-term-line pt-3 text-[10px] uppercase tracking-[0.18em] text-term-muted">
-              by {CONFIG.profile.name} · building in the open
+              {t.by(CONFIG.profile.name)}
             </p>
           </div>
         </div>
@@ -97,8 +99,8 @@ const BlogPage: NextPageWithLayout<Props> = ({ posts, tags }) => {
           <section className="grid gap-4 pt-12 lg:grid-cols-[2fr_1fr]">
             <article className="group relative flex flex-col rounded-lg bg-term-band p-7 text-[#cdd6de] sm:p-9">
               <div className="flex justify-between border-b border-white/10 pb-4 text-[10px] uppercase tracking-[0.18em] text-white/50">
-                <span>The latest essay</span>
-                <time dateTime={postDate(latest)}>{formatDate(postDate(latest), CONFIG.lang)}</time>
+                <span>{t.latest}</span>
+                <time dateTime={postDate(latest)}>{formatDate(postDate(latest), dateLocale(locale))}</time>
               </div>
               {latest.category && <p className="mt-6 text-xs text-[#f0b946]">{latest.category}</p>}
               <h2 className="mt-3 text-2xl font-extrabold leading-snug text-white group-hover:text-[#4ade80] sm:text-3xl">
@@ -112,19 +114,19 @@ const BlogPage: NextPageWithLayout<Props> = ({ posts, tags }) => {
                 </p>
               )}
               <span className="mt-auto inline-flex items-center gap-1.5 pt-8 text-sm text-white">
-                <span className="text-[#4ade80]">$</span> open essay <FiArrowUpRight />
+                <span className="text-[#4ade80]">$</span> {t.openEssay} <FiArrowUpRight />
               </span>
             </article>
             {second && (
               <article className="card group relative flex flex-col p-7">
                 <div className="flex justify-between text-[10px] uppercase tracking-[0.18em] text-term-muted">
-                  <span>From the workbench</span>
+                  <span>{t.workbench}</span>
                   <span className="text-term-green">●</span>
                 </div>
                 <p className="mt-6 text-xl font-bold leading-snug text-term-fg">
-                  A small fix.
+                  {t.smallFix}
                   <br />
-                  <span className="text-term-amber">A useful lesson.</span>
+                  <span className="text-term-amber">{t.usefulLesson}</span>
                 </p>
                 <h2 className="mt-4 font-bold leading-snug text-term-fg group-hover:text-term-green">
                   <Link href={`/${second.slug}`} className="after:absolute after:inset-0">
@@ -135,7 +137,7 @@ const BlogPage: NextPageWithLayout<Props> = ({ posts, tags }) => {
                   <p className="mt-2 line-clamp-2 text-[13px] leading-relaxed text-term-muted">{second.summary}</p>
                 )}
                 <span className="mt-auto flex items-center justify-between border-t border-term-line pt-4 text-xs text-term-muted">
-                  Open field note <FiArrowUpRight />
+                  {t.openNote} <FiArrowUpRight />
                 </span>
               </article>
             )}
@@ -146,23 +148,23 @@ const BlogPage: NextPageWithLayout<Props> = ({ posts, tags }) => {
           {/* archive */}
           <section>
             <div className="flex items-end justify-between border-b border-term-line pb-4">
-              <h2 className="text-2xl font-bold text-term-fg">The archive</h2>
-              <span className="text-[10px] uppercase tracking-[0.18em] text-term-muted">articles &amp; field notes</span>
+              <h2 className="text-2xl font-bold text-term-fg">{t.archive}</h2>
+              <span className="text-[10px] uppercase tracking-[0.18em] text-term-muted">{t.archiveRight}</span>
             </div>
 
             <div className="mt-6 flex flex-col-reverse gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div className="no-scrollbar flex gap-1 overflow-x-auto rounded-md border border-term-line bg-term-surface p-1 text-xs">
-                {[["All", posts.length] as const, ...categories].map(([name, n]) => {
-                  const active = name === "All" ? !category : category === name
+                {[[null, posts.length] as const, ...categories].map(([name, n]) => {
+                  const active = name === null ? !category : category === name
                   return (
                     <button
-                      key={name}
-                      onClick={() => setCategory(name === "All" ? null : name)}
+                      key={name ?? ""}
+                      onClick={() => setCategory(name)}
                       className={`shrink-0 rounded px-3 py-1.5 transition-colors ${
                         active ? "bg-term-band text-[#4ade80]" : "text-term-muted hover:text-term-fg"
                       }`}
                     >
-                      {name} <span className="opacity-60">{n}</span>
+                      {name ?? t.all} <span className="opacity-60">{n}</span>
                     </button>
                   )
                 })}
@@ -173,7 +175,7 @@ const BlogPage: NextPageWithLayout<Props> = ({ posts, tags }) => {
                   type="search"
                   value={q}
                   onChange={(e) => setQ(e.target.value)}
-                  placeholder="grep title, tag, keyword"
+                  placeholder={t.search}
                   className="w-full rounded-md border border-term-line bg-term-surface py-2 pl-9 pr-3 text-[13px] text-term-fg outline-none transition placeholder:text-term-muted/70 focus:border-term-green focus:ring-2 focus:ring-term-green/20"
                 />
               </label>
@@ -181,7 +183,7 @@ const BlogPage: NextPageWithLayout<Props> = ({ posts, tags }) => {
 
             <div className="mt-4 flex flex-wrap items-center gap-2 text-xs text-term-muted">
               <span>
-                <span className="font-bold text-term-fg">{filtered.length}</span> posts
+                <span className="font-bold text-term-fg">{filtered.length}</span> {t.posts(filtered.length)}
               </span>
               {currentTag && (
                 <Link
@@ -197,7 +199,7 @@ const BlogPage: NextPageWithLayout<Props> = ({ posts, tags }) => {
             {groups.map(([year, items]) => (
               <div key={year} className="mt-8">
                 <p className="text-sm font-bold text-term-fg">
-                  {year} <span className="ml-1 text-xs font-normal text-term-muted">{yearCount(year)} posts</span>
+                  {year} <span className="ml-1 text-xs font-normal text-term-muted">{yearCount(year)} {t.posts(yearCount(year))}</span>
                 </p>
                 <div className="divide-y divide-term-line border-b border-term-line">
                   {items.map((p) => (
@@ -208,7 +210,7 @@ const BlogPage: NextPageWithLayout<Props> = ({ posts, tags }) => {
             ))}
             {!filtered.length && (
               <p className="py-16 text-center text-sm text-term-muted">
-                {posts.length ? "grep: no matches." : "No posts yet — check back soon."}
+                {posts.length ? t.noMatch : tr.home.noPosts}
               </p>
             )}
 
@@ -219,17 +221,17 @@ const BlogPage: NextPageWithLayout<Props> = ({ posts, tags }) => {
                   disabled={page === 1}
                   className="text-term-fg hover:text-term-green disabled:text-term-muted/50"
                 >
-                  ← Previous
+                  {t.prev}
                 </button>
                 <span className="text-term-muted">
-                  {page} of {pages}
+                  {t.pageOf(page, pages)}
                 </span>
                 <button
                   onClick={() => setPage((n) => n + 1)}
                   disabled={page === pages}
                   className="text-term-fg hover:text-term-green disabled:text-term-muted/50"
                 >
-                  Next →
+                  {t.next}
                 </button>
               </nav>
             )}
@@ -239,16 +241,16 @@ const BlogPage: NextPageWithLayout<Props> = ({ posts, tags }) => {
           <aside className="space-y-6 lg:border-l lg:border-term-line lg:pl-8">
             {readingPaths.length > 0 && (
               <div>
-                <p className="eyebrow mb-3">A way into the writing</p>
-                <p className="text-xl font-bold leading-snug text-term-fg">Choose a reading path.</p>
-                <p className="mt-2 text-xs text-term-muted">Starting points, depending on what you&apos;re building.</p>
+                <p className="eyebrow mb-3">{t.pathEyebrow}</p>
+                <p className="text-xl font-bold leading-snug text-term-fg">{t.pathTitle}</p>
+                <p className="mt-2 text-xs text-term-muted">{t.pathText}</p>
                 <ol className="mt-4 divide-y divide-term-line">
                   {readingPaths.map(([t, n], i) => (
                     <li key={t} className="py-4">
                       <Link href={`/blog?tag=${encodeURIComponent(t)}`} scroll={false} className="group block">
                         <span className="text-[11px] text-term-amber">0{i + 1} /</span>
                         <span className="mt-1 block font-bold text-term-fg group-hover:text-term-green">#{t}</span>
-                        <span className="text-xs text-term-muted">{n} posts</span>
+                        <span className="text-xs text-term-muted">{n} {tr.blog.posts(n)}</span>
                       </Link>
                     </li>
                   ))}
@@ -256,24 +258,24 @@ const BlogPage: NextPageWithLayout<Props> = ({ posts, tags }) => {
               </div>
             )}
             <div className="card p-5">
-              <p className="eyebrow mb-3">Behind the notebook</p>
+              <p className="eyebrow mb-3">{t.behind}</p>
               <p className="text-lg font-bold leading-snug text-term-fg">
-                Built in practice.
+                {t.builtInPractice}
                 <br />
-                <span className="text-term-green">Shared in public.</span>
+                <span className="text-term-green">{t.sharedInPublic}</span>
               </p>
-              <p className="mt-3 text-xs leading-relaxed text-term-muted">{CONFIG.profile.bio}</p>
+              <p className="mt-3 text-xs leading-relaxed text-term-muted">{copy.profile.bio}</p>
               <Link href="/about" className="link-term mt-4 !text-xs">
-                Meet the author <FiArrowRight />
+                {t.meet} <FiArrowRight />
               </Link>
             </div>
             <div className="card p-5">
-              <p className="text-sm font-bold text-term-fg">Follow new writing</p>
-              <p className="mt-1 text-xs text-term-muted">Articles and engineering notes, in your feed reader.</p>
+              <p className="text-sm font-bold text-term-fg">{t.follow}</p>
+              <p className="mt-1 text-xs text-term-muted">{t.followText}</p>
               {/* /feed is an API rewrite, not a page */}
               {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
               <a href="/feed" className="btn-term-outline mt-4 !py-2 !text-xs">
-                <FiRss /> Subscribe via RSS
+                <FiRss /> {t.subscribe}
               </a>
             </div>
           </aside>
@@ -287,9 +289,8 @@ BlogPage.getLayout = (page) => (
   <Layout
     metaConfig={{
       title: `Blog | ${CONFIG.blog.title}`,
-      description: CONFIG.blog.description,
       type: "website",
-      url: `${CONFIG.link}/blog`,
+      path: "/blog",
     }}
   >
     {page}

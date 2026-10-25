@@ -293,6 +293,9 @@ const PostEditor: React.FC<Props> = ({ post, attachments: initialAttachments = [
               }}
               onBlur={() => set("slug", slugify(form.slug || form.title))}
             />
+            <p className="mt-1 text-xs text-zinc-500">
+              Vietnamese version: same slug + <code>-vi</code> (e.g. <code>about-vi</code>), shown at /vi/&lt;slug&gt;.
+            </p>
           </div>
           <div>
             <label className="label">Tags (comma separated)</label>

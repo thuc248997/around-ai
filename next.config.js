@@ -6,6 +6,8 @@ module.exports = {
   output: "standalone",
   reactStrictMode: true,
   poweredByHeader: false,
+  // English at /, Vietnamese at /vi. No Accept-Language redirect: the URL decides.
+  i18n: { locales: ["en", "vi"], defaultLocale: "en", localeDetection: false },
   async rewrites() {
     return [
       { source: "/uploads/:name", destination: "/api/files/:name" },
@@ -23,6 +25,7 @@ module.exports = {
         has: [{ type: "host", value: `www.${apexHost}` }],
         destination: `${CONFIG.link}/:path*`,
         permanent: true,
+        locale: false,
       },
     ]
   },

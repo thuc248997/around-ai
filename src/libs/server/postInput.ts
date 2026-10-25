@@ -14,7 +14,7 @@ export function parsePostInput(
 
   const slug = slugify(String(body?.slug || title))
   if (!slug) return { error: "Slug is invalid" }
-  if (["admin", "api", "uploads", "blog"].includes(slug)) {
+  if (["admin", "api", "uploads", "blog", "vi", "en"].includes(slug)) {
     return { error: `Slug "${slug}" is reserved` }
   }
 

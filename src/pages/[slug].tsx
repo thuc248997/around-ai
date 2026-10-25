@@ -6,21 +6,28 @@ import Layout from "@components/Layout"
 import Markdown from "@components/Markdown"
 import Tag from "@components/Tag"
 import Utterances from "@components/Utterances"
-import { getPublicPostBySlug } from "@libs/server/posts"
+import { getPublicPostBySlug, isTranslationSlug } from "@libs/server/posts"
+import { dateLocale, toLocale, useT, VI_SUFFIX } from "@libs/i18n"
 import { formatDate, readingTime } from "@libs/utils"
 import { TPostDetail } from "@customTypes/index"
 import { NextPageWithLayout } from "./_app"
 
-type Props = { post: TPostDetail }
+type Props = { post: TPostDetail; translated: boolean }
 
-export const getServerSideProps: GetServerSideProps<Props> = async ({ params, res }) => {
-  const post = await getPublicPostBySlug(String(params?.slug))
-  if (!post) return { notFound: true }
+export const getServerSideProps: GetServerSideProps<Props> = async ({ params, res, locale }) => {
+  const slug = String(params?.slug)
+  // translations are reached through /vi/<slug>, not by their own slug
+  if (isTranslationSlug(slug)) {
+    return { redirect: { destination: `/vi/${slug.slice(0, -VI_SUFFIX.length)}`, permanent: false } }
+  }
+  const found = await getPublicPostBySlug(slug, toLocale(locale))
+  if (!found) return { notFound: true }
   res.setHeader("Cache-Control", "public, s-maxage=60, stale-while-revalidate=600")
-  return { props: { post } }
+  return { props: found }
 }
 
-const DetailPage: NextPageWithLayout<Props> = ({ post }) => {
+const DetailPage: NextPageWithLayout<Props> = ({ post, translated }) => {
+  const { locale, t } = useT()
   const isPage = post.type === "PAGE"
   const date = post.publishedAt || post.createdAt
 
@@ -39,15 +46,20 @@ const DetailPage: NextPageWithLayout<Props> = ({ post }) => {
           )}
         </nav>
       )}
+      {!translated && (
+        <p className="mb-6 rounded-md border border-term-line bg-term-surface px-4 py-2.5 text-xs text-term-muted">
+          <span className="text-term-amber">note:</span> {t.post.noTranslation}
+        </p>
+      )}
       <header className="mb-10 border-b border-term-line pb-8">
         {!isPage && (
           <div className="mb-5 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-term-muted">
             <span className="text-term-green">$</span>
-            <time dateTime={date}>{formatDate(date, CONFIG.lang)}</time>
+            <time dateTime={date}>{formatDate(date, dateLocale(locale))}</time>
             <span aria-hidden>·</span>
-            <span>{readingTime(post.content)} min read</span>
+            <span>{t.post.minRead(readingTime(post.content))}</span>
             <span aria-hidden>·</span>
-            <span>by {CONFIG.profile.name}</span>
+            <span>{t.post.by(CONFIG.profile.name)}</span>
           </div>
         )}
         <h1 className="text-3xl font-extrabold leading-tight tracking-tight text-term-fg sm:text-[2.4rem]">
@@ -82,14 +94,14 @@ const DetailPage: NextPageWithLayout<Props> = ({ post }) => {
       {!isPage && (
         <div className="card mt-10 flex flex-col gap-4 p-6 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <p className="eyebrow mb-2">Behind the notebook</p>
+            <p className="eyebrow mb-2">{t.blog.behind}</p>
             <p className="text-sm text-term-muted">
-              Written by <span className="font-bold text-term-fg">{CONFIG.profile.name}</span>,{" "}
+              {t.post.writtenBy} <span className="font-bold text-term-fg">{CONFIG.profile.name}</span>,{" "}
               {CONFIG.profile.role}.
             </p>
           </div>
           <Link href="/blog" className="btn-term-outline shrink-0 !text-xs">
-            <FiArrowLeft /> All posts
+            <FiArrowLeft /> {t.post.allPosts}
           </Link>
         </div>
       )}
@@ -105,11 +117,11 @@ DetailPage.getLayout = (page) => {
     <Layout
       metaConfig={{
         title: `${post.title} | ${CONFIG.blog.title}`,
-        description: post.summary || CONFIG.blog.description,
+        description: post.summary || undefined,
         type: post.type === "POST" ? "article" : "website",
         date: post.publishedAt || post.createdAt,
         image: post.coverImage,
-        url: `${CONFIG.link}/${post.slug}`,
+        path: `/${post.slug}`,
         noindex: post.status === "UNLISTED",
       }}
     >

@@ -1,17 +1,20 @@
 import { CONFIG } from "site.config"
 import Head from "next/head"
+import { dateLocale, LOCALES, localeUrl, useT } from "@libs/i18n"
 
 export type MetaConfigProps = {
   title: string
-  description: string
+  description?: string // defaults to the localized site description
   type: "website" | "article"
   date?: string
   image?: string | null
-  url: string
+  path: string // "/" or "/slug"; the locale prefix is added here
   noindex?: boolean
 }
 
-const MetaConfig: React.FC<MetaConfigProps> = (meta) => {
+const MetaConfig: React.FC<MetaConfigProps> = (props) => {
+  const { locale, copy } = useT()
+  const meta = { ...props, description: props.description || copy.blog.description, url: localeUrl(props.path, locale) }
   const image = meta.image
     ? meta.image.startsWith("/")
       ? `${CONFIG.link}${meta.image}`
@@ -28,13 +31,17 @@ const MetaConfig: React.FC<MetaConfigProps> = (meta) => {
       )}
       <meta name="description" content={meta.description} />
       <link rel="canonical" href={meta.url} />
+      {LOCALES.map((l) => (
+        <link key={l} rel="alternate" hrefLang={l} href={localeUrl(meta.path, l)} />
+      ))}
+      <link rel="alternate" hrefLang="x-default" href={localeUrl(meta.path, "en")} />
       {/* og */}
       <meta property="og:type" content={meta.type} />
       <meta property="og:site_name" content={CONFIG.blog.title} />
       <meta property="og:title" content={meta.title} />
       <meta property="og:description" content={meta.description} />
       <meta property="og:url" content={meta.url} />
-      {CONFIG.lang && <meta property="og:locale" content={CONFIG.lang.replace("-", "_")} />}
+      <meta property="og:locale" content={dateLocale(locale).replace("-", "_")} />
       {image && <meta property="og:image" content={image} />}
       {/* twitter */}
       <meta name="twitter:title" content={meta.title} />

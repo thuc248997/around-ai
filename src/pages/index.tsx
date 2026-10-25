@@ -6,18 +6,20 @@ import Layout from "@components/Layout"
 import SectionHeading from "@components/SectionHeading"
 import TerminalWindow from "@components/TerminalWindow"
 import { countTags, getPublishedPosts } from "@libs/server/posts"
+import { dateLocale, toLocale, useT } from "@libs/i18n"
 import { formatDate, postDate } from "@libs/utils"
 import { TPost } from "@customTypes/index"
 import { NextPageWithLayout } from "./_app"
 
 type Props = { latest: TPost[]; total: number; tagCount: number }
 
-export const getServerSideProps: GetServerSideProps<Props> = async ({ query, res }) => {
+export const getServerSideProps: GetServerSideProps<Props> = async ({ query, res, locale }) => {
   // the archive used to live at /?tag=…
   if (typeof query.tag === "string") {
-    return { redirect: { destination: `/blog?tag=${encodeURIComponent(query.tag)}`, permanent: true } }
+    const prefix = locale === "vi" ? "/vi" : ""
+    return { redirect: { destination: `${prefix}/blog?tag=${encodeURIComponent(query.tag)}`, permanent: true } }
   }
-  const posts = await getPublishedPosts()
+  const posts = await getPublishedPosts(toLocale(locale))
   res.setHeader("Cache-Control", "public, s-maxage=60, stale-while-revalidate=600")
   return {
     props: {
@@ -32,15 +34,17 @@ const EXPLORATION_ICONS = [FiCpu, FiLayers, FiServer]
 const pad = (n: number) => String(n + 1).padStart(2, "0")
 
 const HomePage: NextPageWithLayout<Props> = ({ latest, total, tagCount }) => {
-  const { profile, home } = CONFIG
-  const project = CONFIG.projects[0]
+  const { locale, t, copy } = useT()
+  const { profile, home } = copy
+  const project = copy.projects[0]
+  const h = t.home
   const featured = latest.slice(0, 3)
   const more = latest.slice(3)
 
   const stats = [
-    { value: total, label: "Published posts" },
-    { value: `Since ${CONFIG.since}`, label: "Writing in the open" },
-    { value: tagCount, label: "Topics covered" },
+    { value: total, label: h.statPosts },
+    { value: h.statSince(CONFIG.since), label: h.statSinceLabel },
+    { value: tagCount, label: h.statTopics },
     { value: profile.role, label: profile.name },
   ]
 
@@ -50,9 +54,9 @@ const HomePage: NextPageWithLayout<Props> = ({ latest, total, tagCount }) => {
         {/* breadcrumb strip */}
         <div className="mt-8 flex justify-between border-b border-term-line pb-3 text-[10px] uppercase tracking-[0.18em] text-term-muted">
           <span>
-            {profile.name} / engineering notebook
+            {profile.name} / {h.crumb}
           </span>
-          <span className="hidden sm:inline">ideas — systems — lessons</span>
+          <span className="hidden sm:inline">{h.crumbRight}</span>
         </div>
 
         {/* hero */}
@@ -70,10 +74,10 @@ const HomePage: NextPageWithLayout<Props> = ({ latest, total, tagCount }) => {
             <p className="mt-3 max-w-xl text-[13px] leading-relaxed text-term-muted">{profile.bio}</p>
             <div className="mt-8 flex flex-wrap items-center gap-3">
               <Link href="/blog" className="btn-term">
-                Read the notebook <FiArrowRight />
+                {h.read} <FiArrowRight />
               </Link>
               <Link href="/about" className="btn-term-outline">
-                About me
+                {h.aboutMe}
               </Link>
             </div>
             <div className="mt-6 flex flex-wrap items-center gap-4 text-xs text-term-muted">
@@ -87,12 +91,12 @@ const HomePage: NextPageWithLayout<Props> = ({ latest, total, tagCount }) => {
               </a>
               <span aria-hidden>/</span>
               <a href={`mailto:${profile.email}`} className="inline-flex items-center gap-1 hover:text-term-green">
-                Let&apos;s build something useful <FiArrowUpRight />
+                {h.buildCta} <FiArrowUpRight />
               </a>
             </div>
           </div>
 
-          <TerminalWindow title={`${profile.name}@around-ai: ~`} footer="Hands-on by choice. Curious by default.">
+          <TerminalWindow title={`${profile.name}@around-ai: ~`} footer={h.terminalFooter}>
             <div className="flex items-start gap-4">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
@@ -143,9 +147,9 @@ const HomePage: NextPageWithLayout<Props> = ({ latest, total, tagCount }) => {
           <section className="pt-24">
             <SectionHeading
               index="01"
-              label="Selected work"
-              title="From an idea to something useful."
-              link={{ href: project.href, label: "All projects" }}
+              label={h.workLabel}
+              title={h.workTitle}
+              link={{ href: project.href, label: h.allProjects }}
             />
             <div className="card grid items-center gap-10 p-6 sm:p-10 lg:grid-cols-[1fr_1.15fr]">
               <div>
@@ -164,10 +168,10 @@ const HomePage: NextPageWithLayout<Props> = ({ latest, total, tagCount }) => {
                   ))}
                 </div>
                 <a href={project.href} target="_blank" rel="noreferrer" className="link-term mt-6">
-                  Explore {project.name} <FiArrowUpRight />
+                  {h.explore(project.name)} <FiArrowUpRight />
                 </a>
               </div>
-              <TerminalWindow title="around-ai / docker compose" footer="Self-hosted. Markdown in, blog out.">
+              <TerminalWindow title="around-ai / docker compose" footer={h.projectFooter}>
                 <pre className="overflow-x-auto whitespace-pre text-[12px] leading-relaxed">
                   <span className="text-[#4ade80]">$</span> docker compose ps{"\n"}
                   <span className="text-white/50">NAME      STATUS{"\n"}</span>
@@ -190,7 +194,7 @@ const HomePage: NextPageWithLayout<Props> = ({ latest, total, tagCount }) => {
       <section className="mt-24 bg-term-band text-[#cdd6de]">
         <div className="mx-auto grid max-w-6xl gap-12 px-4 py-20 sm:px-6 lg:grid-cols-2">
           <div>
-            <p className="eyebrow mb-4 !text-[#f0b946]">02 / How I work</p>
+            <p className="eyebrow mb-4 !text-[#f0b946]">{h.howIWork}</p>
             <h2 className="text-3xl font-extrabold leading-tight text-white sm:text-4xl">
               {home.principles.title}
               <br />
@@ -198,7 +202,7 @@ const HomePage: NextPageWithLayout<Props> = ({ latest, total, tagCount }) => {
             </h2>
             <p className="mt-5 max-w-md text-[13px] leading-relaxed text-white/60">{home.principles.text}</p>
             <Link href="/about" className="mt-6 inline-flex items-center gap-1.5 text-sm text-white hover:text-[#4ade80]">
-              Background &amp; experience <FiArrowUpRight />
+              {h.background} <FiArrowUpRight />
             </Link>
           </div>
           <ol className="divide-y divide-white/10 border-y border-white/10">
@@ -218,7 +222,7 @@ const HomePage: NextPageWithLayout<Props> = ({ latest, total, tagCount }) => {
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         {/* 03 explorations */}
         <section className="pt-24">
-          <SectionHeading index="03" label="Current explorations" title="The questions keeping me curious." />
+          <SectionHeading index="03" label={h.explorationsLabel} title={h.explorationsTitle} />
           <div className="grid gap-4 md:grid-cols-3">
             {home.explorations.map((e, i) => {
               const Icon = EXPLORATION_ICONS[i % EXPLORATION_ICONS.length]
@@ -240,12 +244,12 @@ const HomePage: NextPageWithLayout<Props> = ({ latest, total, tagCount }) => {
         <section className="pt-24">
           <SectionHeading
             index="04"
-            label="Field notes"
-            title="Building things. Writing it down."
-            link={{ href: "/blog", label: "All articles" }}
+            label={h.notesLabel}
+            title={h.notesTitle}
+            link={{ href: "/blog", label: h.allArticles }}
           />
           {featured.length === 0 && (
-            <p className="card p-10 text-center text-sm text-term-muted">No posts yet — check back soon.</p>
+            <p className="card p-10 text-center text-sm text-term-muted">{h.noPosts}</p>
           )}
           <div className="grid gap-4 md:grid-cols-3">
             {featured.map((p, i) => (
@@ -254,8 +258,8 @@ const HomePage: NextPageWithLayout<Props> = ({ latest, total, tagCount }) => {
                 className="card group relative flex flex-col border-t-2 !border-t-term-green p-6 transition-colors hover:bg-term-raised"
               >
                 <div className="flex justify-between text-[11px] text-term-muted">
-                  <span>NOTE / {pad(i)}</span>
-                  <time dateTime={postDate(p)}>{formatDate(postDate(p), CONFIG.lang)}</time>
+                  <span>{h.note} / {pad(i)}</span>
+                  <time dateTime={postDate(p)}>{formatDate(postDate(p), dateLocale(locale))}</time>
                 </div>
                 <h3 className="mt-5 text-lg font-bold leading-snug text-term-fg group-hover:text-term-green">
                   <Link href={`/${p.slug}`} className="after:absolute after:inset-0">
@@ -277,7 +281,7 @@ const HomePage: NextPageWithLayout<Props> = ({ latest, total, tagCount }) => {
               {more.map((p) => (
                 <li key={p.id} className="group relative flex items-center gap-4 py-4 text-sm">
                   <time dateTime={postDate(p)} className="w-28 shrink-0 text-xs text-term-muted">
-                    {formatDate(postDate(p), CONFIG.lang)}
+                    {formatDate(postDate(p), dateLocale(locale))}
                   </time>
                   <Link
                     href={`/${p.slug}`}
@@ -293,7 +297,7 @@ const HomePage: NextPageWithLayout<Props> = ({ latest, total, tagCount }) => {
           {total > 0 && (
             <div className="mt-8 flex justify-center">
               <Link href="/blog" className="btn-term-outline">
-                View all {total} posts <FiArrowRight />
+                {h.viewAll(total)} <FiArrowRight />
               </Link>
             </div>
           )}
@@ -306,7 +310,7 @@ const HomePage: NextPageWithLayout<Props> = ({ latest, total, tagCount }) => {
           <p className="eyebrow mb-4">{home.cta.eyebrow}</p>
           <h2 className="text-3xl font-extrabold leading-tight text-term-fg sm:text-4xl">{home.cta.title}</h2>
           <a href={`mailto:${CONFIG.profile.email}`} className="btn-term mt-8">
-            Let&apos;s talk <FiArrowRight />
+            {h.talk} <FiArrowRight />
           </a>
           <p className="mt-5 text-xs text-term-muted">{home.cta.text}</p>
         </div>
@@ -319,9 +323,8 @@ HomePage.getLayout = (page) => (
   <Layout
     metaConfig={{
       title: CONFIG.blog.title,
-      description: CONFIG.blog.description,
       type: "website",
-      url: CONFIG.link,
+      path: "/",
     }}
   >
     {page}
