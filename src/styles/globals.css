@@ -2,13 +2,45 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ---------- terminal theme tokens (RGB triplets) ---------- */
+:root {
+  --bg: 245 247 242;
+  --surface: 255 255 252;
+  --raised: 236 240 232;
+  --line: 212 219 206;
+  --fg: 28 34 30;
+  --muted: 94 105 98;
+  --green: 22 128 61;
+  --amber: 168 98 0;
+  --band: 13 17 23;
+}
+.dark {
+  --bg: 10 13 18;
+  --surface: 14 19 26;
+  --raised: 20 27 36;
+  --line: 36 45 58;
+  --fg: 205 214 222;
+  --muted: 128 139 151;
+  --green: 74 222 128;
+  --amber: 240 185 70;
+  --band: 6 9 13;
+}
+
 html {
-  scroll-padding-top: 5rem;
+  scroll-padding-top: 6rem;
   -webkit-tap-highlight-color: transparent;
 }
 
+body {
+  background-color: rgb(var(--bg));
+  background-image: linear-gradient(rgb(var(--line) / 0.35) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(var(--line) / 0.35) 1px, transparent 1px);
+  background-size: 32px 32px;
+  font-feature-settings: "calt" 1, "liga" 1;
+}
+
 ::selection {
-  background: rgba(99, 102, 241, 0.25);
+  background: rgb(var(--green) / 0.3);
 }
 
 .no-scrollbar {
@@ -18,27 +50,87 @@ html {
   display: none;
 }
 
+/* blinking block cursor after an element */
+.cursor::after {
+  content: "";
+  display: inline-block;
+  width: 0.5em;
+  height: 0.85em;
+  margin-left: 0.12em;
+  vertical-align: -0.08em;
+  background: currentColor;
+  animation: blink 1.1s steps(1) infinite;
+}
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cursor::after {
+    animation: none;
+  }
+}
+
+/* ---------- shared terminal pieces ---------- */
+@layer components {
+  .eyebrow {
+    @apply text-[11px] font-medium uppercase tracking-[0.18em] text-term-amber;
+  }
+  .card {
+    @apply rounded-lg border border-term-line bg-term-surface;
+  }
+  .btn-term {
+    @apply inline-flex items-center gap-2 rounded-md bg-term-green px-4 py-2.5 text-sm font-semibold text-term-bg transition hover:brightness-110;
+  }
+  .btn-term-outline {
+    @apply inline-flex items-center gap-2 rounded-md border border-term-line bg-term-surface px-4 py-2.5 text-sm font-medium text-term-fg transition hover:border-term-green hover:text-term-green;
+  }
+  .link-term {
+    @apply inline-flex items-center gap-1.5 text-sm font-medium text-term-fg transition-colors hover:text-term-green;
+  }
+}
+
 /* ---------- article typography ---------- */
 @layer components {
   .prose-blog {
-    @apply prose prose-zinc max-w-none dark:prose-invert
-      prose-headings:scroll-mt-20 prose-headings:font-semibold prose-headings:tracking-tight
-      prose-h2:mt-12 prose-h2:text-2xl prose-h3:text-xl
-      prose-p:leading-[1.8] prose-li:leading-[1.8]
-      prose-a:font-medium prose-a:text-accent-600 prose-a:underline-offset-4 hover:prose-a:text-accent-700
-      dark:prose-a:text-accent-400
-      prose-blockquote:border-l-accent-500 prose-blockquote:font-normal prose-blockquote:not-italic
-      prose-img:rounded-xl prose-img:border prose-img:border-zinc-200 dark:prose-img:border-zinc-800
-      prose-code:rounded-md prose-code:bg-zinc-100 prose-code:px-1.5 prose-code:py-0.5 prose-code:font-normal
+    @apply prose max-w-none
+      prose-headings:scroll-mt-24 prose-headings:font-bold prose-headings:tracking-tight
+      prose-h2:mt-12 prose-h2:text-xl prose-h3:text-lg
+      prose-p:leading-[1.85] prose-li:leading-[1.85]
+      prose-a:font-medium prose-a:underline-offset-4
+      prose-blockquote:border-l-term-green prose-blockquote:font-normal prose-blockquote:not-italic
+      prose-img:rounded-lg prose-img:border prose-img:border-term-line
+      prose-code:rounded prose-code:bg-term-raised prose-code:px-1.5 prose-code:py-0.5 prose-code:font-normal
       prose-code:before:content-none prose-code:after:content-none
-      dark:prose-code:bg-zinc-800
-      prose-pre:rounded-xl prose-pre:border prose-pre:border-zinc-200 prose-pre:bg-zinc-50 prose-pre:text-zinc-800
-      dark:prose-pre:border-zinc-800 dark:prose-pre:bg-zinc-900 dark:prose-pre:text-zinc-200
+      prose-pre:rounded-lg prose-pre:border prose-pre:border-term-line prose-pre:bg-term-raised prose-pre:text-term-fg
       prose-th:text-left prose-table:text-sm;
-    font-size: 1.0625rem;
+    font-size: 0.97rem;
+    --tw-prose-body: rgb(var(--fg) / 0.9);
+    --tw-prose-headings: rgb(var(--fg));
+    --tw-prose-lead: rgb(var(--muted));
+    --tw-prose-links: rgb(var(--green));
+    --tw-prose-bold: rgb(var(--fg));
+    --tw-prose-counters: rgb(var(--muted));
+    --tw-prose-bullets: rgb(var(--green));
+    --tw-prose-hr: rgb(var(--line));
+    --tw-prose-quotes: rgb(var(--fg));
+    --tw-prose-quote-borders: rgb(var(--green));
+    --tw-prose-captions: rgb(var(--muted));
+    --tw-prose-code: rgb(var(--amber));
+    --tw-prose-th-borders: rgb(var(--line));
+    --tw-prose-td-borders: rgb(var(--line));
+  }
+  .prose-blog h2::before {
+    content: "## ";
+    color: rgb(var(--green));
+  }
+  .prose-blog h3::before {
+    content: "### ";
+    color: rgb(var(--green));
   }
   .prose-blog pre code {
-    @apply !bg-transparent !p-0 text-[13.5px];
+    @apply !bg-transparent !p-0 text-[13px] !text-term-fg;
   }
   .prose-blog pre.mermaid {
     @apply flex justify-center bg-transparent;

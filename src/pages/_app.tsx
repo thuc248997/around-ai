@@ -1,12 +1,12 @@
 import "@styles/globals.css"
-import { Inter, JetBrains_Mono } from "next/font/google"
+import { JetBrains_Mono } from "next/font/google"
 import useGtagEffect from "@hooks/useGtagEffect"
 import Scripts from "@components/Scripts"
 import { NextPage } from "next"
 import { ReactElement, ReactNode } from "react"
 import { AppProps } from "next/app"
 
-const sans = Inter({ subsets: ["latin", "vietnamese"], variable: "--font-sans" })
+// one terminal font for the whole site
 const mono = JetBrains_Mono({ subsets: ["latin", "vietnamese"], variable: "--font-mono" })
 
 export type NextPageWithLayout<PageProps = {}> = NextPage<PageProps> & {
@@ -25,7 +25,6 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
     <>
       <style jsx global>{`
         :root {
-          --font-sans: ${sans.style.fontFamily};
           --font-mono: ${mono.style.fontFamily};
         }
       `}</style>

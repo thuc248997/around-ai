@@ -11,8 +11,16 @@ const Layout: React.FC<Props> = ({ children, metaConfig }) => {
   return (
     <div className="flex min-h-screen flex-col">
       <MetaConfig {...metaConfig} />
+      <a
+        href="#content"
+        className="sr-only z-50 rounded bg-term-green px-3 py-2 text-sm text-term-bg focus:not-sr-only focus:fixed focus:left-4 focus:top-4"
+      >
+        Skip to content
+      </a>
       <Header />
-      <main className="mx-auto w-full max-w-5xl flex-grow px-4 sm:px-6">{children}</main>
+      <main id="content" className="w-full flex-grow">
+        {children}
+      </main>
       <Footer />
     </div>
   )

@@ -30,3 +30,11 @@ export function formatBytes(n: number) {
   if (n < 1024 * 1024) return `${(n / 1024).toFixed(1)} KB`
   return `${(n / 1024 / 1024).toFixed(1)} MB`
 }
+
+/** "Oct 18" */
+export function formatShortDate(date: string | Date, local: string) {
+  return new Date(date).toLocaleDateString(local, { month: "short", day: "numeric" })
+}
+
+export const postDate = (p: { publishedAt: string | null; createdAt: string }) =>
+  p.publishedAt || p.createdAt

@@ -9,6 +9,7 @@ export default async function handler(_req: NextApiRequest, res: NextApiResponse
   })
   const urls = [
     `<url><loc>${CONFIG.link}</loc></url>`,
+    `<url><loc>${CONFIG.link}/blog</loc></url>`,
     ...rows.map(
       (r) => `<url><loc>${CONFIG.link}/${r.slug}</loc><lastmod>${r.updatedAt.toISOString()}</lastmod></url>`
     ),

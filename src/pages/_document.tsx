@@ -22,7 +22,7 @@ class MyDocument extends Document {
             />
           )}
         </Head>
-        <body className="bg-white text-zinc-800 antialiased dark:bg-zinc-950 dark:text-zinc-200">
+        <body className="font-mono text-term-fg antialiased">
           <Main />
           <NextScript />
         </body>

@@ -19,7 +19,7 @@ const SocialLinks: React.FC<{ className?: string }> = ({ className = "" }) => {
           aria-label={label}
           target="_blank"
           rel="noreferrer"
-          className="rounded-md p-2 text-zinc-500 transition-colors hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-white"
+          className="rounded-md p-2 text-term-muted transition-colors hover:bg-term-raised hover:text-term-green"
         >
           <Icon className="h-[18px] w-[18px]" />
         </a>

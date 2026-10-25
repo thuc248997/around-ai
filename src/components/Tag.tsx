@@ -4,12 +4,12 @@ type Props = { children: string; active?: boolean; count?: number }
 
 const Tag: React.FC<Props> = ({ children, active, count }) => (
   <Link
-    href={active ? "/" : `/?tag=${encodeURIComponent(children)}`}
+    href={active ? "/blog" : `/blog?tag=${encodeURIComponent(children)}`}
     scroll={false}
-    className={`inline-flex shrink-0 items-center gap-1 rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
+    className={`inline-flex shrink-0 items-center gap-1 rounded border px-2 py-0.5 text-xs transition-colors ${
       active
-        ? "border-accent-500 bg-accent-500 text-white"
-        : "border-zinc-200 text-zinc-600 hover:border-accent-400 hover:text-accent-600 dark:border-zinc-800 dark:text-zinc-400 dark:hover:border-accent-400 dark:hover:text-accent-400"
+        ? "border-term-green bg-term-green text-term-bg"
+        : "border-term-line text-term-muted hover:border-term-green hover:text-term-green"
     }`}
   >
     #{children}

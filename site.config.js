@@ -14,8 +14,40 @@ const CONFIG = {
     {
       name: `around-ai blog`,
       href: "https://github.com/thuc248997/around-ai",
+      label: "Open source / Self-hosted",
+      tagline: "Write in markdown. Ship on your own box.",
+      description:
+        "This blog: a self-hosted Next.js + PostgreSQL stack with a markdown editor, running in Docker behind a Cloudflare Tunnel.",
+      tags: ["Next.js", "PostgreSQL", "Docker"],
     },
   ],
+  // home page copy (layout sections)
+  home: {
+    eyebrow: "AI Engineer / Field notes",
+    headline: "Building AI",
+    headlineAccent: "beyond the demo.",
+    lead: "I'm thucpham, an AI Engineer. I build with LLMs and machine learning, and write down what actually works.",
+    principles: {
+      title: "The bigger picture.",
+      accent: "The engineering detail.",
+      text: "How I approach AI work: start from the real problem, measure everything, and leave notes the next engineer can use.",
+      items: [
+        { title: "Start with the real constraint.", text: "Latency, cost, privacy and the people using the system shape the design from day one." },
+        { title: "Make decisions measurable.", text: "Benchmark the options. Write down the tradeoffs. Trust evidence over a polished demo." },
+        { title: "Build understanding that lasts.", text: "Share the reasoning and the lessons so the next build starts further ahead." },
+      ],
+    },
+    explorations: [
+      { title: "LLM applications", text: "Agents, RAG and tool use that hold up outside of a notebook." },
+      { title: "Machine learning in practice", text: "Training, evaluation and the boring parts that make models useful." },
+      { title: "Running AI yourself", text: "Self-hosting models and infra: what it costs and what it takes." },
+    ],
+    cta: {
+      eyebrow: "The next page",
+      title: "Good systems start with a conversation.",
+      text: "Have a project, a question, or an interesting idea? I'd love to hear it.",
+    },
+  },
   // blog setting (required)
   blog: {
     title: "Around-ai",
