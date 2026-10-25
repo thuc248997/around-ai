@@ -5,7 +5,7 @@ import { useT } from "@libs/i18n"
 import Logo from "./Logo"
 
 const Footer: React.FC = () => {
-  const { t, copy } = useT()
+  const { t } = useT()
   const f = t.footer
   const columns = [
     {
@@ -38,7 +38,7 @@ const Footer: React.FC = () => {
         <div>
           <Logo />
           <p className="mt-4 max-w-xs text-xs leading-relaxed text-term-muted">
-            {CONFIG.profile.role} · {copy.blog.description} {f.tagline}
+            {CONFIG.profile.role} · {f.tagline}
           </p>
           <SocialLinks className="-ml-2 mt-4" />
         </div>

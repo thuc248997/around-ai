@@ -88,14 +88,16 @@ const CONFIG = {
       },
     },
     blog: {
-      description: "Chào mừng đến với around-ai!",
+      description:
+        "Ghi chép thực chiến về AI engineering của thucpham: ứng dụng LLM, agent, RAG, machine learning thực tế và tự vận hành AI.",
     },
   },
 
   // blog setting (required)
   blog: {
     title: "Around-ai",
-    description: "Welcome to around-ai!",
+    description:
+      "Field notes on AI engineering by thucpham: LLM applications, agents, RAG, machine learning in practice and self-hosting AI.",
     theme: "auto", // ['light', 'dark', 'auto'
   },
 
@@ -104,7 +106,7 @@ const CONFIG = {
   since: 2023, // If leave this empty, current year will be used.
   lang: "en-US", // ['en-US', 'zh-CN', 'zh-HK', 'zh-TW', 'ja-JP', 'es-ES', 'ko-KR']
   seo: {
-    keywords: ["AI", "Blog", "Machine Learning", "LLM"],
+    keywords: ["AI engineering", "LLM", "AI agents", "RAG", "Machine Learning", "Self-hosted AI", "Blog"],
   },
 
   // plugin configuration (optional)

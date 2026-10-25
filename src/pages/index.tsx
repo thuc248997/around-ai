@@ -322,7 +322,8 @@ const HomePage: NextPageWithLayout<Props> = ({ latest, total, tagCount }) => {
 HomePage.getLayout = (page) => (
   <Layout
     metaConfig={{
-      title: CONFIG.blog.title,
+      title: `${CONFIG.blog.title} | ${CONFIG.profile.name}, ${CONFIG.profile.role}`,
+      imageTitle: `${CONFIG.home.headline} ${CONFIG.home.headlineAccent}`,
       type: "website",
       path: "/",
     }}

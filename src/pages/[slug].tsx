@@ -7,12 +7,13 @@ import Markdown from "@components/Markdown"
 import Tag from "@components/Tag"
 import Utterances from "@components/Utterances"
 import { getPublicPostBySlug, isTranslationSlug } from "@libs/server/posts"
-import { dateLocale, toLocale, useT, VI_SUFFIX } from "@libs/i18n"
+import { dateLocale, Locale, localeUrl, messages, toLocale, useT, VI_SUFFIX } from "@libs/i18n"
+import { articleLd, breadcrumbLd, ogImageUrl, PERSON_ID } from "@libs/seo"
 import { formatDate, readingTime } from "@libs/utils"
 import { TPostDetail } from "@customTypes/index"
 import { NextPageWithLayout } from "./_app"
 
-type Props = { post: TPostDetail; translated: boolean }
+type Props = { post: TPostDetail; translated: boolean; locales: Locale[] }
 
 export const getServerSideProps: GetServerSideProps<Props> = async ({ params, res, locale }) => {
   const slug = String(params?.slug)
@@ -76,7 +77,7 @@ const DetailPage: NextPageWithLayout<Props> = ({ post, translated }) => {
         // eslint-disable-next-line @next/next/no-img-element
         <img
           src={post.coverImage}
-          alt=""
+          alt={post.title}
           className="mb-10 w-full rounded-lg border border-term-line object-cover"
         />
       )}
@@ -112,17 +113,48 @@ const DetailPage: NextPageWithLayout<Props> = ({ post, translated }) => {
 }
 
 DetailPage.getLayout = (page) => {
-  const post: TPostDetail = page.props.post
+  const { post, locales }: Props = page.props
+  const isPost = post.type === "POST"
+  const path = `/${post.slug}`
+  const published = post.publishedAt || post.createdAt
+  const image = post.coverImage || ogImageUrl(post.title, post.summary, post.category || post.tags[0])
   return (
     <Layout
       metaConfig={{
         title: `${post.title} | ${CONFIG.blog.title}`,
         description: post.summary || undefined,
-        type: post.type === "POST" ? "article" : "website",
-        date: post.publishedAt || post.createdAt,
-        image: post.coverImage,
-        path: `/${post.slug}`,
+        type: isPost ? "article" : "website",
+        date: published,
+        modified: post.updatedAt,
+        image,
+        path,
         noindex: post.status === "UNLISTED",
+        locales,
+        tags: post.tags,
+        markdownPath: `${path}.md`,
+        jsonLd: (locale) =>
+          isPost
+            ? [
+                articleLd(locale, {
+                  title: post.title,
+                  summary: post.summary,
+                  path,
+                  image: image.startsWith("/") ? `${CONFIG.link}${image}` : image,
+                  published,
+                  modified: post.updatedAt,
+                  tags: post.tags,
+                  category: post.category,
+                  words: post.content.trim().split(/\s+/).length,
+                }),
+                breadcrumbLd(locale, [
+                  { name: CONFIG.blog.title, path: "/" },
+                  { name: messages[locale].footer.blog, path: "/blog" },
+                  { name: post.title, path },
+                ]),
+              ]
+            : post.slug === "about"
+            ? [{ "@type": "ProfilePage", url: localeUrl(path, locale), name: post.title, mainEntity: { "@id": PERSON_ID } }]
+            : [],
       }}
     >
       {page}

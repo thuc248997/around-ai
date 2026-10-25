@@ -81,15 +81,20 @@ export async function getPublishedPosts(locale: Locale = "en") {
  * translation wins when it exists; `translated` is false when it fell back to English.
  */
 export async function getPublicPostBySlug(slug: string, locale: Locale = "en") {
-  const slugs = locale === "vi" ? [`${slug}${VI_SUFFIX}`, slug] : [slug]
+  const viSlug = `${slug}${VI_SUFFIX}`
   const rows = await prisma.post.findMany({
-    where: { slug: { in: slugs }, status: { in: ["PUBLISHED", "UNLISTED"] } },
+    where: { slug: { in: [slug, viSlug] }, status: { in: ["PUBLISHED", "UNLISTED"] } },
   })
-  const post = slugs.map((s) => rows.find((r) => r.slug === s)).find(Boolean)
+  const en = rows.find((r) => r.slug === slug)
+  const vi = rows.find((r) => r.slug === viSlug)
+  const post = locale === "vi" ? vi || en : en
   if (!post) return null
+  // the languages this URL has real content in, for canonical/hreflang
+  const locales: Locale[] = [...(en ? ["en" as const] : []), ...(vi ? ["vi" as const] : [])]
   return {
     post: { ...serializePostDetail(post), slug },
-    translated: locale === "en" || post.slug !== slug,
+    translated: locale === "en" || post === vi,
+    locales,
   }
 }
 

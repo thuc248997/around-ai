@@ -15,6 +15,11 @@ module.exports = {
       { source: "/rss.xml", destination: "/api/rss" },
       { source: "/sitemap.xml", destination: "/api/sitemap" },
       { source: "/robots.txt", destination: "/api/robots" },
+      { source: "/llms.txt", destination: "/api/llms" },
+      { source: "/llms-full.txt", destination: "/api/llms?full=1" },
+      // markdown copy of any post for agents: /<slug>.md, /vi/<slug>.md
+      { source: "/vi/:slug([^/.]+).md", destination: "/api/md/:slug?lang=vi", locale: false },
+      { source: "/:slug([^/.]+).md", destination: "/api/md/:slug" },
     ]
   },
   async redirects() {

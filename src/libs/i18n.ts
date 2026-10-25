@@ -214,7 +214,7 @@ const vi: typeof en = {
   },
 }
 
-const messages = { en, vi }
+export const messages = { en, vi }
 
 export function useLocale(): Locale {
   return toLocale(useRouter().locale)

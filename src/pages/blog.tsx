@@ -7,7 +7,8 @@ import { CONFIG } from "site.config"
 import Layout from "@components/Layout"
 import PostCard from "@components/PostCard"
 import { countTags, getPublishedPosts } from "@libs/server/posts"
-import { dateLocale, toLocale, useT } from "@libs/i18n"
+import { dateLocale, localeUrl, toLocale, useT } from "@libs/i18n"
+import { PERSON_ID } from "@libs/seo"
 import { formatDate, postDate } from "@libs/utils"
 import { TPost, TTags } from "@customTypes/index"
 import { NextPageWithLayout } from "./_app"
@@ -289,8 +290,25 @@ BlogPage.getLayout = (page) => (
   <Layout
     metaConfig={{
       title: `Blog | ${CONFIG.blog.title}`,
+      imageTitle: "~/blog",
       type: "website",
       path: "/blog",
+      jsonLd: (locale) => [
+        {
+          "@type": "Blog",
+          "@id": `${CONFIG.link}/blog#blog`,
+          url: localeUrl("/blog", locale),
+          name: `${CONFIG.blog.title} Blog`,
+          author: { "@id": PERSON_ID },
+          inLanguage: dateLocale(locale),
+          blogPost: page.props.posts.slice(0, 20).map((p: TPost) => ({
+            "@type": "BlogPosting",
+            headline: p.title,
+            url: localeUrl(`/${p.slug}`, locale),
+            datePublished: p.publishedAt || p.createdAt,
+          })),
+        },
+      ],
     }}
   >
     {page}
