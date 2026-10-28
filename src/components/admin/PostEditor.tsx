@@ -2,13 +2,17 @@ import { useRouter } from "next/router"
 import { ChangeEvent, ClipboardEvent, DragEvent, useCallback, useEffect, useRef, useState } from "react"
 import { FiEye, FiImage, FiPaperclip, FiSave, FiTrash2, FiUpload } from "react-icons/fi"
 import Markdown from "@components/Markdown"
+import { VI_SUFFIX } from "@libs/i18n"
 import { formatBytes, slugify } from "@libs/utils"
 import { TAttachment, TPostDetail } from "@customTypes/index"
 
 type Props = {
   post?: TPostDetail
+  translation?: TPostDetail | null
   attachments?: TAttachment[]
 }
+
+type Lang = "en" | "vi"
 
 type Form = {
   title: string
@@ -21,7 +25,17 @@ type Form = {
   status: TPostDetail["status"]
   type: TPostDetail["type"]
   publishedAt: string
+  // Vietnamese translation, saved to the `<slug>-vi` row alongside the post
+  viTitle: string
+  viSummary: string
+  viContent: string
+  viCategory: string
 }
+
+const FIELDS = {
+  en: { title: "title", summary: "summary", content: "content" },
+  vi: { title: "viTitle", summary: "viSummary", content: "viContent" },
+} as const
 
 // <input type="datetime-local"> wants local time without zone
 const toLocalInput = (iso?: string | null) => {
@@ -30,7 +44,7 @@ const toLocalInput = (iso?: string | null) => {
   return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 16)
 }
 
-const PostEditor: React.FC<Props> = ({ post, attachments: initialAttachments = [] }) => {
+const PostEditor: React.FC<Props> = ({ post, translation, attachments: initialAttachments = [] }) => {
   const router = useRouter()
   const textarea = useRef<HTMLTextAreaElement>(null)
   const fileInput = useRef<HTMLInputElement>(null)
@@ -45,7 +59,15 @@ const PostEditor: React.FC<Props> = ({ post, attachments: initialAttachments = [
     status: post?.status ?? "DRAFT",
     type: post?.type ?? "POST",
     publishedAt: toLocalInput(post?.publishedAt),
+    viTitle: translation?.title ?? "",
+    viSummary: translation?.summary ?? "",
+    viContent: translation?.content ?? "",
+    viCategory: translation?.category ?? "",
   })
+  // a `-vi` row with no English original is edited on its own, without a translation tab
+  const pairable = !post?.slug.endsWith(VI_SUFFIX)
+  const [lang, setLang] = useState<Lang>(pairable && router.query.lang === "vi" ? "vi" : "en")
+  const field = FIELDS[lang]
   const [slugTouched, setSlugTouched] = useState(Boolean(post))
   const [attachments, setAttachments] = useState<TAttachment[]>(initialAttachments)
   const [tab, setTab] = useState<"write" | "preview">("write")
@@ -79,14 +101,15 @@ const PostEditor: React.FC<Props> = ({ post, attachments: initialAttachments = [
     const el = textarea.current
     setDirty(true)
     setForm((f) => {
-      if (!el) return { ...f, content: `${f.content}\n${text}` }
+      const content = f[field.content]
+      if (!el) return { ...f, [field.content]: `${content}\n${text}` }
       const start = el.selectionStart
       const end = el.selectionEnd
       requestAnimationFrame(() => {
         el.focus()
         el.selectionStart = el.selectionEnd = start + text.length
       })
-      return { ...f, content: f.content.slice(0, start) + text + f.content.slice(end) }
+      return { ...f, [field.content]: content.slice(0, start) + text + content.slice(end) }
     })
   }
 
@@ -119,9 +142,10 @@ const PostEditor: React.FC<Props> = ({ post, attachments: initialAttachments = [
     async (overrides: Partial<Form> = {}) => {
       setSaving(true)
       setMessage(null)
+      const { viTitle, viSummary, viContent, viCategory, ...rest } = { ...form, ...overrides }
       const payload = {
-        ...form,
-        ...overrides,
+        ...rest,
+        vi: pairable ? { title: viTitle, summary: viSummary, content: viContent, category: viCategory } : undefined,
         publishedAt: (overrides.publishedAt ?? form.publishedAt) ? new Date(overrides.publishedAt ?? form.publishedAt).toISOString() : null,
         attachmentIds: post ? undefined : attachments.map((a) => a.id),
       }
@@ -138,7 +162,7 @@ const PostEditor: React.FC<Props> = ({ post, attachments: initialAttachments = [
       setMessage({ kind: "ok", text: "Saved" })
       if (!post) router.replace(`/admin/posts/${data.id}`)
     },
-    [form, post, attachments, router]
+    [form, post, pairable, attachments, router]
   )
 
   // Ctrl/Cmd+S
@@ -154,7 +178,8 @@ const PostEditor: React.FC<Props> = ({ post, attachments: initialAttachments = [
   }, [save, saving])
 
   const remove = async () => {
-    if (!post || !confirm("Delete this post permanently?")) return
+    const both = pairable && (form.viTitle || form.viContent)
+    if (!post || !confirm(both ? "Delete this post and its Vietnamese translation permanently?" : "Delete this post permanently?")) return
     const res = await fetch(`/api/admin/posts/${post.id}`, { method: "DELETE" })
     if (res.ok) {
       setDirty(false)
@@ -178,22 +203,41 @@ const PostEditor: React.FC<Props> = ({ post, attachments: initialAttachments = [
   }
 
   const publicUrl = `/${form.slug}`
+  const hasVi = pairable && Boolean(translation || form.viTitle.trim() || form.viContent.trim())
 
   return (
     <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
       <div className="space-y-4">
+        {pairable && (
+          <div className="flex gap-1 text-sm">
+            {(["en", "vi"] as const).map((l) => (
+              <button
+                key={l}
+                onClick={() => setLang(l)}
+                className={`rounded-md px-3 py-1.5 font-medium ${
+                  lang === l
+                    ? "bg-zinc-900 text-white dark:bg-white dark:text-zinc-900"
+                    : "text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200"
+                }`}
+              >
+                {l === "en" ? "English" : "Tiếng Việt"}
+                {l === "vi" && !form.viTitle.trim() && <span className="ml-1 text-xs opacity-60">(none)</span>}
+              </button>
+            ))}
+          </div>
+        )}
         <input
           className="field border-none bg-transparent px-0 text-2xl font-semibold shadow-none focus:ring-0 dark:bg-transparent"
-          placeholder="Post title"
-          value={form.title}
-          onChange={onField("title")}
+          placeholder={lang === "en" ? "Post title" : "Tiêu đề tiếng Việt (để trống nếu không dịch)"}
+          value={form[field.title]}
+          onChange={onField(field.title)}
           autoFocus={!post}
         />
         <textarea
           className="field min-h-[60px] resize-y"
-          placeholder="Short summary shown on the feed and in link previews"
-          value={form.summary}
-          onChange={onField("summary")}
+          placeholder={lang === "en" ? "Short summary shown on the feed and in link previews" : "Tóm tắt ngắn hiển thị ở danh sách bài và khi chia sẻ link"}
+          value={form[field.summary]}
+          onChange={onField(field.summary)}
           rows={2}
         />
 
@@ -223,14 +267,14 @@ const PostEditor: React.FC<Props> = ({ post, attachments: initialAttachments = [
               ref={textarea}
               className="block min-h-[60vh] w-full resize-y bg-transparent p-4 font-mono text-[13.5px] leading-relaxed text-zinc-800 outline-none dark:text-zinc-200"
               placeholder={"Write in Markdown…\n\nPaste or drop images/files here to upload them.\nUse ```mermaid code blocks for diagrams."}
-              value={form.content}
-              onChange={onField("content")}
+              value={form[field.content]}
+              onChange={onField(field.content)}
               onPaste={onPaste}
               onDrop={onDrop}
             />
           ) : (
             <div className="min-h-[60vh] p-6">
-              {form.content.trim() ? <Markdown content={form.content} /> : <p className="text-zinc-500">Nothing to preview.</p>}
+              {form[field.content].trim() ? <Markdown content={form[field.content]} /> : <p className="text-zinc-500">Nothing to preview.</p>}
             </div>
           )}
         </div>
@@ -266,6 +310,11 @@ const PostEditor: React.FC<Props> = ({ post, attachments: initialAttachments = [
               <FiEye /> View live
             </a>
           )}
+          {post && form.status !== "DRAFT" && hasVi && translation && (
+            <a href={`/vi${publicUrl}`} target="_blank" rel="noreferrer" className="btn-ghost w-full">
+              <FiEye /> View live (Tiếng Việt)
+            </a>
+          )}
 
           <div>
             <label className="label">Status</label>
@@ -294,7 +343,17 @@ const PostEditor: React.FC<Props> = ({ post, attachments: initialAttachments = [
               onBlur={() => set("slug", slugify(form.slug || form.title))}
             />
             <p className="mt-1 text-xs text-zinc-500">
-              Vietnamese version: same slug + <code>-vi</code> (e.g. <code>about-vi</code>), shown at /vi/&lt;slug&gt;.
+              {pairable ? (
+                <>
+                  The Tiếng Việt tab is saved with this post at /vi/&lt;slug&gt;. Status, slug, tags, date and cover are
+                  shared by both languages.
+                </>
+              ) : (
+                <>
+                  Standalone translation: its English post <code>{form.slug.slice(0, -VI_SUFFIX.length)}</code> doesn&apos;t
+                  exist.
+                </>
+              )}
             </p>
           </div>
           <div>
@@ -305,6 +364,12 @@ const PostEditor: React.FC<Props> = ({ post, attachments: initialAttachments = [
             <label className="label">Category</label>
             <input className="field" value={form.category} onChange={onField("category")} placeholder="Tutorial" />
           </div>
+          {pairable && (
+            <div>
+              <label className="label">Category (Tiếng Việt)</label>
+              <input className="field" value={form.viCategory} onChange={onField("viCategory")} placeholder="Hướng dẫn" />
+            </div>
+          )}
           <div>
             <label className="label">Publish date</label>
             <input type="datetime-local" className="field" value={form.publishedAt} onChange={onField("publishedAt")} />
