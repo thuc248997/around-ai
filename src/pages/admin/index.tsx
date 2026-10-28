@@ -5,17 +5,23 @@ import { FiPlus } from "react-icons/fi"
 import AdminLayout from "@components/admin/AdminLayout"
 import { requireAdminPage } from "@libs/server/auth"
 import { prisma } from "@libs/server/db"
-import { listSelect, serializePost } from "@libs/server/posts"
+import { isTranslationSlug, listSelect, serializePost } from "@libs/server/posts"
+import { VI_SUFFIX } from "@libs/i18n"
 import { formatDate } from "@libs/utils"
 import { TPost } from "@customTypes/index"
 
-type Props = { posts: TPost[] }
+type Props = { posts: (TPost & { hasVi: boolean })[] }
 
 export const getServerSideProps: GetServerSideProps<Props> = async (ctx) => {
   const redirect = requireAdminPage(ctx)
   if (redirect) return redirect
   const posts = await prisma.post.findMany({ orderBy: { updatedAt: "desc" }, select: listSelect })
-  return { props: { posts: posts.map(serializePost) } }
+  // translations are edited inside their English post, so only orphaned ones get their own row
+  const slugs = new Set(posts.map((p) => p.slug))
+  const rows = posts
+    .filter((p) => !isTranslationSlug(p.slug) || !slugs.has(p.slug.slice(0, -VI_SUFFIX.length)))
+    .map((p) => ({ ...serializePost(p), hasVi: slugs.has(`${p.slug}${VI_SUFFIX}`) }))
+  return { props: { posts: rows } }
 }
 
 const STATUS_STYLE: Record<string, string> = {
@@ -66,6 +72,11 @@ export default function AdminHome({ posts }: Props) {
                   <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${STATUS_STYLE[p.status]}`}>
                     {p.status.toLowerCase()}
                   </span>
+                  {p.hasVi && (
+                    <span className="ml-1 rounded-full bg-sky-50 px-2 py-0.5 text-xs font-medium text-sky-700 dark:bg-sky-500/10 dark:text-sky-400">
+                      vi
+                    </span>
+                  )}
                 </td>
                 <td className="hidden px-4 py-3 text-zinc-500 md:table-cell">{p.type.toLowerCase()}</td>
                 <td className="hidden px-4 py-3 text-zinc-500 md:table-cell">{formatDate(p.updatedAt, "en-US")}</td>
