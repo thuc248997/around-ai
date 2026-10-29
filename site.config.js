@@ -98,7 +98,7 @@ const CONFIG = {
     title: "Around-ai",
     description:
       "Field notes on AI engineering by thucpham: LLM applications, agents, RAG, machine learning in practice and self-hosting AI.",
-    theme: "auto", // ['light', 'dark', 'auto'
+    theme: "auto", // ['light', 'dark', 'auto'] — auto: dark 18:00–06:00 in the visitor's local time
   },
 
   // CONFIG configration (required)
