@@ -28,13 +28,13 @@ const CONFIG = {
     headlineAccent: "beyond the demo.",
     lead: "I'm danielpham, an AI Engineer. I build with LLMs and machine learning, and write down what actually works.",
     principles: {
-      title: "The bigger picture.",
-      accent: "The engineering detail.",
-      text: "How I approach AI work: start from the real problem, measure everything, and leave notes the next engineer can use.",
+      title: "The whole system.",
+      accent: "From technology to business.",
+      text: "How I work: see the whole system, from technology and engineering to business, before going into the details.",
       items: [
-        { title: "Start with the real constraint.", text: "Latency, cost, privacy and the people using the system shape the design from day one." },
-        { title: "Make decisions measurable.", text: "Benchmark the options. Write down the tradeoffs. Trust evidence over a polished demo." },
-        { title: "Build understanding that lasts.", text: "Share the reasoning and the lessons so the next build starts further ahead." },
+        { title: "Pick the technology for the problem, not the hype.", text: "Know the strengths, limits and cost of each option (models, infra, data) before committing." },
+        { title: "Engineer for production, not the demo.", text: "Clear architecture that can be measured and operated: latency, cost and reliability planned from day one." },
+        { title: "Tie every technical choice to business value.", text: "Start from users and goals, and measure by real outcomes, not just technical metrics." },
       ],
     },
     explorations: [
@@ -67,13 +67,13 @@ const CONFIG = {
       headlineAccent: "vượt xa bản demo.",
       lead: "Mình là danielpham, một AI Engineer. Mình làm việc với LLM và machine learning, và ghi lại những gì thực sự hiệu quả.",
       principles: {
-        title: "Bức tranh toàn cảnh.",
-        accent: "Chi tiết kỹ thuật.",
-        text: "Cách mình tiếp cận công việc AI: bắt đầu từ bài toán thật, đo lường mọi thứ, và để lại ghi chú mà kỹ sư đi sau có thể dùng được.",
+        title: "Bức tranh hệ thống.",
+        accent: "Từ công nghệ đến kinh doanh.",
+        text: "Cách mình làm việc: nhìn toàn cảnh hệ thống, từ công nghệ, kỹ thuật đến kinh doanh, trước khi đi vào từng chi tiết.",
         items: [
-          { title: "Bắt đầu từ ràng buộc thực tế.", text: "Độ trễ, chi phí, quyền riêng tư và người dùng hệ thống định hình thiết kế ngay từ ngày đầu." },
-          { title: "Quyết định phải đo lường được.", text: "Benchmark các phương án. Ghi lại các đánh đổi. Tin vào bằng chứng hơn là một bản demo bóng bẩy." },
-          { title: "Xây dựng hiểu biết bền vững.", text: "Chia sẻ lập luận và bài học để lần xây dựng sau bắt đầu từ một vị trí xa hơn." },
+          { title: "Chọn công nghệ vì bài toán, không vì xu hướng.", text: "Hiểu điểm mạnh, giới hạn và chi phí của từng lựa chọn (mô hình, hạ tầng, dữ liệu) trước khi quyết định." },
+          { title: "Thiết kế để chạy thật, không chỉ để demo.", text: "Kiến trúc rõ ràng, đo lường được và vận hành được: độ trễ, chi phí, độ tin cậy được tính từ ngày đầu." },
+          { title: "Mỗi quyết định kỹ thuật gắn với giá trị kinh doanh.", text: "Bắt đầu từ người dùng và mục tiêu, đo bằng kết quả thực tế chứ không chỉ bằng chỉ số kỹ thuật." },
         ],
       },
       explorations: [
