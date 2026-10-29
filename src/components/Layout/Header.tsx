@@ -55,6 +55,10 @@ const Header: React.FC = () => {
                 locale={l}
                 scroll={false}
                 hrefLang={l}
+                // an explicit choice beats the location-based default (see middleware)
+                onClick={() => {
+                  document.cookie = `NEXT_LOCALE=${l}; path=/; max-age=31536000; samesite=lax`
+                }}
                 aria-current={l === locale ? "true" : undefined}
                 // phones show only the language you can switch to
                 className={`rounded px-1.5 py-0.5 uppercase transition-colors ${

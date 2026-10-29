@@ -1,10 +1,10 @@
 const CONFIG = {
   // profile setting (required)
   profile: {
-    name: "thucpham",
+    name: "danielpham",
     image: "/avatar.svg", // If you want to create your own notion avatar, check out https://notion-avatar.vercel.app
     role: "AI Engineer",
-    bio: "Welcome to my blog! I am ThucPham, an AI Engineer. This blog is where I share my knowledge and experience around AI.",
+    bio: "Welcome to my blog! I am DanielPham, an AI Engineer. This blog is where I share my knowledge and experience around AI.",
     email: "thuc248997@gmail.com",
     linkedin: "thuc-pham-807241132",
     github: "thuc248997",
@@ -26,7 +26,7 @@ const CONFIG = {
     eyebrow: "AI Engineer / Field notes",
     headline: "Building AI",
     headlineAccent: "beyond the demo.",
-    lead: "I'm thucpham, an AI Engineer. I build with LLMs and machine learning, and write down what actually works.",
+    lead: "I'm danielpham, an AI Engineer. I build with LLMs and machine learning, and write down what actually works.",
     principles: {
       title: "The bigger picture.",
       accent: "The engineering detail.",
@@ -51,7 +51,7 @@ const CONFIG = {
   // Vietnamese copy, served under /vi. Anything missing falls back to the English values above.
   vi: {
     profile: {
-      bio: "Chào mừng đến với blog của mình! Mình là ThucPham, một AI Engineer. Đây là nơi mình chia sẻ kiến thức và kinh nghiệm xoay quanh AI.",
+      bio: "Chào mừng đến với blog của mình! Mình là DanielPham, một AI Engineer. Đây là nơi mình chia sẻ kiến thức và kinh nghiệm xoay quanh AI.",
     },
     projects: [
       {
@@ -65,7 +65,7 @@ const CONFIG = {
       eyebrow: "AI Engineer / Ghi chép thực chiến",
       headline: "Xây dựng AI",
       headlineAccent: "vượt xa bản demo.",
-      lead: "Mình là thucpham, một AI Engineer. Mình làm việc với LLM và machine learning, và ghi lại những gì thực sự hiệu quả.",
+      lead: "Mình là danielpham, một AI Engineer. Mình làm việc với LLM và machine learning, và ghi lại những gì thực sự hiệu quả.",
       principles: {
         title: "Bức tranh toàn cảnh.",
         accent: "Chi tiết kỹ thuật.",
@@ -89,7 +89,7 @@ const CONFIG = {
     },
     blog: {
       description:
-        "Ghi chép thực chiến về AI engineering của thucpham: ứng dụng LLM, agent, RAG, machine learning thực tế và tự vận hành AI.",
+        "Ghi chép thực chiến về AI engineering của danielpham: ứng dụng LLM, agent, RAG, machine learning thực tế và tự vận hành AI.",
     },
   },
 
@@ -97,8 +97,8 @@ const CONFIG = {
   blog: {
     title: "Around-ai",
     description:
-      "Field notes on AI engineering by thucpham: LLM applications, agents, RAG, machine learning in practice and self-hosting AI.",
-    theme: "auto", // ['light', 'dark', 'auto'
+      "Field notes on AI engineering by danielpham: LLM applications, agents, RAG, machine learning in practice and self-hosting AI.",
+    theme: "auto", // ['light', 'dark', 'auto'] — auto: dark 18:00–06:00 in the visitor's local time
   },
 
   // CONFIG configration (required)

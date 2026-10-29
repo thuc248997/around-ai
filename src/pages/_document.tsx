@@ -1,9 +1,11 @@
 import Document, { Html, Head, Main, NextScript } from "next/document"
 import { CONFIG } from "site.config"
 import { dateLocale, toLocale } from "@libs/i18n"
+import { timeThemeJs } from "@hooks/useTheme"
 
-// Runs before paint so dark mode doesn't flash
-const themeScript = `(function(){try{var c=${JSON.stringify(CONFIG.blog.theme)};var t=c!=="auto"?c:(localStorage.theme||(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"));if(t==="dark")document.documentElement.classList.add("dark")}catch(e){}})()`
+// Runs before paint so dark mode doesn't flash. "auto" uses the visitor's local time,
+// unless they toggled manually and that choice hasn't expired yet.
+const themeScript = `(function(){var c=${JSON.stringify(CONFIG.blog.theme)},t=c;if(c==="auto"){t=(${timeThemeJs})(new Date());try{if(Number(localStorage.themeUntil)>Date.now())t=localStorage.theme}catch(e){}}if(t==="dark")document.documentElement.classList.add("dark")})()`
 
 class MyDocument extends Document {
   render() {

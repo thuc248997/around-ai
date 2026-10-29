@@ -6,7 +6,8 @@ module.exports = {
   output: "standalone",
   reactStrictMode: true,
   poweredByHeader: false,
-  // English at /, Vietnamese at /vi. No Accept-Language redirect: the URL decides.
+  // English at /, Vietnamese at /vi. No Accept-Language redirect; src/middleware.ts
+  // sends first-time visitors from Vietnam to /vi until they pick a language.
   i18n: { locales: ["en", "vi"], defaultLocale: "en", localeDetection: false },
   async rewrites() {
     return [
