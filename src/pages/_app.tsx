@@ -1,3 +1,4 @@
+import "katex/dist/katex.min.css"
 import "@styles/globals.css"
 import { JetBrains_Mono } from "next/font/google"
 import useGtagEffect from "@hooks/useGtagEffect"

@@ -1,6 +1,8 @@
 import { useEffect, useRef } from "react"
 import ReactMarkdown from "react-markdown"
 import remarkGfm from "remark-gfm"
+import remarkMath from "remark-math"
+import rehypeKatex from "rehype-katex"
 import rehypeHighlight from "rehype-highlight"
 import rehypeSlug from "rehype-slug"
 
@@ -29,8 +31,13 @@ const Markdown: React.FC<Props> = ({ content, className = "" }) => {
   return (
     <div ref={ref} className={`prose-blog ${className}`}>
       <ReactMarkdown
-        remarkPlugins={[remarkGfm]}
-        rehypePlugins={[rehypeSlug, [rehypeHighlight, { detect: false, ignoreMissing: true }]]}
+        // math only inside $$...$$ so a stray "$" (prices) in old posts stays plain text
+        remarkPlugins={[remarkGfm, [remarkMath, { singleDollarTextMath: false }]]}
+        rehypePlugins={[
+          rehypeSlug,
+          rehypeKatex,
+          [rehypeHighlight, { detect: false, ignoreMissing: true }],
+        ]}
         components={{
           pre({ node, children, ...props }) {
             const code: any = node?.children?.[0]

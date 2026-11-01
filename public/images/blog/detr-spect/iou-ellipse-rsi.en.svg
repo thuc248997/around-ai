@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 300" font-family="Helvetica, Arial, sans-serif" font-size="13">
+  <rect width="760" height="300" fill="#ffffff"/>
+  <!-- left: IoU -->
+  <text x="190" y="26" text-anchor="middle" font-size="15" font-weight="bold" fill="#111">IoU = |A ∩ B| / |A ∪ B|</text>
+  <rect x="70" y="60" width="160" height="130" fill="#22c55e" fill-opacity="0.18" stroke="#16a34a" stroke-width="2.5"/>
+  <rect x="140" y="105" width="160" height="130" fill="#ef4444" fill-opacity="0.18" stroke="#dc2626" stroke-width="2.5"/>
+  <rect x="140" y="105" width="90" height="85" fill="#7c3aed" fill-opacity="0.35"/>
+  <text x="80" y="80" fill="#15803d">A: ground truth</text>
+  <text x="200" y="228" fill="#b91c1c">B: prediction</text>
+  <text x="185" y="152" text-anchor="middle" fill="#4c1d95" font-weight="bold">A ∩ B</text>
+  <text x="190" y="270" text-anchor="middle" fill="#374151">TP if IoU ≥ 0.5 (thyroid) or ≥ 0.3 (shoulder)</text>
+  <line x1="380" y1="20" x2="380" y2="285" stroke="#d1d5db" stroke-dasharray="4 4"/>
+  <!-- right: ellipse inscribed in bbox -->
+  <text x="570" y="26" text-anchor="middle" font-size="15" font-weight="bold" fill="#111">RSI = U(E_T) / U(E_S)</text>
+  <rect x="430" y="60" width="300" height="190" fill="#0b0b0b"/>
+  <ellipse cx="580" cy="110" rx="26" ry="22" fill="#f8fafc" fill-opacity="0.85"/>
+  <rect x="550" y="84" width="60" height="52" fill="none" stroke="#f59e0b" stroke-width="2"/>
+  <ellipse cx="580" cy="110" rx="30" ry="26" fill="none" stroke="#f59e0b" stroke-width="2" stroke-dasharray="5 3"/>
+  <text x="618" y="92" fill="#fbbf24">B_T → E_T</text>
+  <rect x="452" y="170" width="70" height="56" fill="none" stroke="#38bdf8" stroke-width="2"/>
+  <ellipse cx="487" cy="198" rx="35" ry="28" fill="#38bdf8" fill-opacity="0.12" stroke="#38bdf8" stroke-width="2" stroke-dasharray="5 3"/>
+  <text x="530" y="236" fill="#7dd3fc">B_S → E_S (shoulder, reference)</text>
+  <text x="570" y="275" text-anchor="middle" fill="#374151">Sum of pixel values inside the ellipse inscribed in each box</text>
+</svg>
