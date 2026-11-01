@@ -17,7 +17,7 @@ export function middleware(req: NextRequest) {
   if (req.method !== "GET" || (dest && dest !== "document")) return
   if (BOTS.test(headers.get("user-agent") || "")) return
 
-  const country = headers.get("cf-ipcountry") || headers.get("x-vercel-ip-country")
+  const country = headers.get("cf-ipcountry")
   if (!country || !VI_COUNTRIES.has(country.toUpperCase())) return
 
   const url = nextUrl.clone()
