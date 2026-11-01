@@ -135,6 +135,9 @@ body {
   .prose-blog pre.mermaid {
     @apply flex justify-center bg-transparent;
   }
+  .prose-blog .katex-display {
+    @apply overflow-x-auto overflow-y-hidden py-1;
+  }
 }
 
 /* ---------- code highlighting (highlight.js classes) ---------- */
